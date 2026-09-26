@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react"
+import { useCallback, useState } from "react"
 import type { Chat, Credentials, Message } from "./sheared/types/common"
 import { useCredentials } from "./features/auth/hooks/useCredentials"
 import { SetupScreen } from "./features/auth/components/SetupScreen"
