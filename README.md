@@ -2,10 +2,6 @@
 
 Тестовый проект на React + TypeScript для позиции Frontend Developer.
 
-## Стек
-
-React 19, TypeScript, Vite 8, Vitest 5, React Testing Library.
-
 ## Структура
 
 ```text
@@ -39,6 +35,10 @@ src/
 * Защита от race conditions при подключении и загрузке истории
 * Объединение сообщений по `id`
 * Emoji picker с вставкой в позицию курсора
+
+## Стек
+
+React 19, TypeScript, Vite 8, Vitest 5, React Testing Library.
 
 ## Локальный запуск
 
