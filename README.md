@@ -4,17 +4,20 @@
 
 ## Структура
 
+## Структура
+
 ```text
 src/
-├── api/           # client.ts, greenApi.ts, types.ts
+├── api/           # API client, GREEN-API methods, API types
 ├── features/
-│   ├── auth/      # SetupScreen, useConnection, useCredentials
-│   ├── chat/      # components, hooks, emoji, utils
-│   └── settings/
-├── shared/        # constants, hooks, types, utils
-├── tests/         # fixtures.ts, mocks.ts, setup.ts
+│   ├── auth/      # подключение и credentials
+│   ├── chat/      # чат, сообщения, уведомления
+│   └── settings/  # настройки
+├── shared/        # общие hooks, types, utils, constants
+├── tests/         # fixtures, mocks, test setup
 ├── App.tsx
-└── main.tsx
+├── main.tsx
+└── styles.css
 ```
 ## Скриншоты
 <img width="1440" height="855" alt="Screenshot 2026-09-26 at 19 36 44" src="https://github.com/user-attachments/assets/287175ad-8a93-4c87-8135-06b6a3c1cf61" />
