@@ -11,7 +11,7 @@ import {
 import { SettingsModal } from "./features/settings/SettingsModal"
 import { useChat, useNotifications } from "./features/chat/hooks"
 import { CHAT_STORAGE_KEY } from "./sheared/constants/storageKeys"
-import { readStoredChat } from "./sheared/utils/helpers/chatStoreUtils"
+import { readStoredChat } from "./sheared/utils/chatStoreUtils"
 import { useConnection } from "./features/auth/hooks/useConnection"
 
 export default function App() {

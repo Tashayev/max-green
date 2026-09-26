@@ -2,10 +2,22 @@ import { useCallback, useState } from "react"
 import type { Credentials } from "../../../sheared/types/common"
 import { STORAGE_KEY } from "../../../sheared/constants/storageKeys"
 
-
 const EMPTY_CREDENTIALS: Credentials = {
   idInstance: "",
   apiTokenInstance: "",
+}
+
+function isCredentials(value: unknown): value is Credentials {
+  if (typeof value !== "object" || value === null) {
+    return false
+  }
+
+  const candidate = value as Record<string, unknown>
+
+  return (
+    typeof candidate.idInstance === "string" &&
+    typeof candidate.apiTokenInstance === "string"
+  )
 }
 
 function readStored(): Credentials | null {
@@ -16,7 +28,9 @@ function readStored(): Credentials | null {
       return null
     }
 
-    return JSON.parse(value) as Credentials
+    const parsed: unknown = JSON.parse(value)
+
+    return isCredentials(parsed) ? parsed : null
   } catch {
     return null
   }

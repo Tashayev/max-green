@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest"
 import { greenApiGet, greenApiPost, greenApiDelete } from "./client"
-import { MOCK_CREDS } from "../tests/fixtures"
+import { TEST_CREDS } from "../tests/fixtures"
 
 type FetchMock = ReturnType<
   typeof vi.fn<(input: RequestInfo | URL, init?: RequestInit) => Promise<Response>>
@@ -39,7 +39,7 @@ describe("greenApiClient", () => {
     it("собирает URL из метода и кредов", async () => {
       fetchMock.mockResolvedValue(jsonResponse({ ok: true }))
 
-      await greenApiGet("getStateInstance", MOCK_CREDS)
+      await greenApiGet("getStateInstance", TEST_CREDS)
 
       expect(fetchMock).toHaveBeenCalledTimes(1)
       const [url, init] = fetchMock.mock.calls[0]!
@@ -64,7 +64,7 @@ describe("greenApiClient", () => {
     it("добавляет query-параметры, если они есть в методе", async () => {
       fetchMock.mockResolvedValue(jsonResponse({}))
 
-      await greenApiGet("getChatHistory?count=100", MOCK_CREDS)
+      await greenApiGet("getChatHistory?count=100", TEST_CREDS)
 
       const [url] = fetchMock.mock.calls[0]!
       expect(url).toBe(`${BASE}/getChatHistory/abc123?count=100`)
@@ -74,7 +74,7 @@ describe("greenApiClient", () => {
       fetchMock.mockResolvedValue(jsonResponse({}))
       const controller = new AbortController()
 
-      await greenApiGet("getStateInstance", MOCK_CREDS, controller.signal)
+      await greenApiGet("getStateInstance", TEST_CREDS, controller.signal)
 
       const [, init] = fetchMock.mock.calls[0]!
       expect(init?.signal).toBe(controller.signal)
@@ -85,7 +85,7 @@ describe("greenApiClient", () => {
 
       const result = await greenApiGet<{ stateInstance: string }>(
         "getStateInstance",
-        MOCK_CREDS,
+        TEST_CREDS,
       )
 
       expect(result).toEqual({ stateInstance: "authorized" })
@@ -96,7 +96,7 @@ describe("greenApiClient", () => {
     it("шлёт POST с JSON-телом и заголовком", async () => {
       fetchMock.mockResolvedValue(jsonResponse({ idMessage: "1" }))
 
-      await greenApiPost("sendMessage", MOCK_CREDS, {
+      await greenApiPost("sendMessage", TEST_CREDS, {
         chatId: "79990001122@c.us",
         message: "привет",
       })
@@ -116,7 +116,7 @@ describe("greenApiClient", () => {
       fetchMock.mockResolvedValue(jsonResponse({}))
       const controller = new AbortController()
 
-      await greenApiPost("sendMessage", MOCK_CREDS, {}, controller.signal)
+      await greenApiPost("sendMessage", TEST_CREDS, {}, controller.signal)
 
       const [, init] = fetchMock.mock.calls[0]!
       expect(init?.signal).toBe(controller.signal)
@@ -127,7 +127,7 @@ describe("greenApiClient", () => {
     it("шлёт DELETE с pathSuffix", async () => {
       fetchMock.mockResolvedValue(jsonResponse({}))
 
-      await greenApiDelete("deleteNotification", MOCK_CREDS, undefined, "/12345")
+      await greenApiDelete("deleteNotification", TEST_CREDS, undefined, "/12345")
 
       const [url, init] = fetchMock.mock.calls[0]!
       expect(url).toBe(`${BASE}/deleteNotification/abc123/12345`)
@@ -137,7 +137,7 @@ describe("greenApiClient", () => {
     it("работает без pathSuffix", async () => {
       fetchMock.mockResolvedValue(jsonResponse({}))
 
-      await greenApiDelete("deleteNotification", MOCK_CREDS)
+      await greenApiDelete("deleteNotification", TEST_CREDS)
 
       const [url] = fetchMock.mock.calls[0]!
       expect(url).toBe(`${BASE}/deleteNotification/abc123`)
@@ -150,7 +150,7 @@ describe("greenApiClient", () => {
         jsonResponse({ message: "Instance not authorized" }, { status: 401 }),
       )
 
-      await expect(greenApiGet("getStateInstance", MOCK_CREDS)).rejects.toThrow(
+      await expect(greenApiGet("getStateInstance", TEST_CREDS)).rejects.toThrow(
         "Instance not authorized",
       )
     })
@@ -158,7 +158,7 @@ describe("greenApiClient", () => {
     it("кидает Error с текстом, если ответ — не JSON", async () => {
       fetchMock.mockResolvedValue(textResponse("Bad gateway", { status: 502 }))
 
-      await expect(greenApiGet("getStateInstance", MOCK_CREDS)).rejects.toThrow(
+      await expect(greenApiGet("getStateInstance", TEST_CREDS)).rejects.toThrow(
         "Bad gateway",
       )
     })
@@ -166,7 +166,7 @@ describe("greenApiClient", () => {
     it("кидает HTTP <status> если тело пустое и не ok", async () => {
       fetchMock.mockResolvedValue(new Response("", { status: 500 }))
 
-      await expect(greenApiGet("getStateInstance", MOCK_CREDS)).rejects.toThrow(
+      await expect(greenApiGet("getStateInstance", TEST_CREDS)).rejects.toThrow(
         "HTTP 500",
       )
     })
@@ -174,7 +174,7 @@ describe("greenApiClient", () => {
     it("возвращает null на пустом теле с ok", async () => {
       fetchMock.mockResolvedValue(new Response("", { status: 200 }))
 
-      const result = await greenApiGet<null>("getStateInstance", MOCK_CREDS)
+      const result = await greenApiGet<null>("getStateInstance", TEST_CREDS)
 
       expect(result).toBeNull()
     })
@@ -182,7 +182,7 @@ describe("greenApiClient", () => {
     it("возвращает строку, если тело не JSON но ok", async () => {
       fetchMock.mockResolvedValue(textResponse("pong", { status: 200 }))
 
-      const result = await greenApiGet<string>("ping", MOCK_CREDS)
+      const result = await greenApiGet<string>("ping", TEST_CREDS)
 
       expect(result).toBe("pong")
     })
@@ -190,7 +190,7 @@ describe("greenApiClient", () => {
     it("пробрасывает ошибки сети из fetch", async () => {
       fetchMock.mockRejectedValue(new TypeError("Failed to fetch"))
 
-      await expect(greenApiGet("getStateInstance", MOCK_CREDS)).rejects.toThrow(
+      await expect(greenApiGet("getStateInstance", TEST_CREDS)).rejects.toThrow(
         "Failed to fetch",
       )
     })
@@ -199,7 +199,7 @@ describe("greenApiClient", () => {
       fetchMock.mockRejectedValue(new DOMException("aborted", "AbortError"))
 
       await expect(
-        greenApiGet("getStateInstance", MOCK_CREDS),
+        greenApiGet("getStateInstance", TEST_CREDS),
       ).rejects.toMatchObject({ name: "AbortError" })
     })
   })

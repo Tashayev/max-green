@@ -1,16 +1,29 @@
-import { useState } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 import { greenApi } from "../../../api/greenApi"
-import { Credentials } from "../../../sheared/types/common"
+import type { Credentials } from "../../../sheared/types/common"
 
 export function useConnection() {
   const [setupError, setSetupError] = useState("")
   const [connecting, setConnecting] = useState(false)
 
-  const connect = async (nextCredentials: Credentials) => {
+  const controllerRef = useRef<AbortController | null>(null)
+  const mountedRef = useRef(true)
+
+  useEffect(() => {
+    mountedRef.current = true
+    return () => {
+      mountedRef.current = false
+      controllerRef.current?.abort()
+    }
+  }, [])
+
+  const connect = useCallback(async (nextCredentials: Credentials) => {
     setConnecting(true)
     setSetupError("")
 
+    controllerRef.current?.abort()
     const controller = new AbortController()
+    controllerRef.current = controller
 
     try {
       const state = await greenApi.getStateInstance(
@@ -37,17 +50,21 @@ export function useConnection() {
         return false
       }
 
-      setSetupError(
-        requestError instanceof Error
-          ? requestError.message
-          : "Не удалось подключиться к GREEN-API.",
-      )
+      if (mountedRef.current) {
+        setSetupError(
+          requestError instanceof Error
+            ? requestError.message
+            : "Не удалось подключиться к GREEN-API.",
+        )
+      }
 
       return false
     } finally {
-      setConnecting(false)
+      if (mountedRef.current) {
+        setConnecting(false)
+      }
     }
-  }
+  }, [])
 
   return {
     connect,

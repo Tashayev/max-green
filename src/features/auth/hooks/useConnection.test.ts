@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from "vitest"
 import { renderHook, act } from "@testing-library/react"
 import { useConnection } from "./useConnection"
 import { MOCK_API } from "../../../tests/mocks"
-import { MOCK_CREDS } from "../../../tests/fixtures"
+import { TEST_CREDS } from "../../../tests/fixtures"
 
 vi.mock("../../../api/greenApi", () => ({
   greenApi: {
@@ -22,14 +22,15 @@ describe("useConnection", () => {
 
     const { result } = renderHook(() => useConnection())
 
-    let ok = false
+    let ok: boolean | undefined
     await act(async () => {
-      ok = await result.current.connect(MOCK_CREDS)
+      ok = await result.current.connect(TEST_CREDS)
     })
 
     expect(ok).toBe(true)
     expect(result.current.setupError).toBe("")
-    expect(MOCK_API.configureHttpApi).toHaveBeenCalled()
+    expect(result.current.connecting).toBe(false)
+    expect(MOCK_API.configureHttpApi).toHaveBeenCalledWith(TEST_CREDS)
   })
 
   it("коннектится когда инстанс ready", async () => {
@@ -38,26 +39,29 @@ describe("useConnection", () => {
 
     const { result } = renderHook(() => useConnection())
 
-    let ok = false
+    let ok: boolean | undefined
     await act(async () => {
-      ok = await result.current.connect(MOCK_CREDS)
+      ok = await result.current.connect(TEST_CREDS)
     })
 
     expect(ok).toBe(true)
   })
 
   it("не коннектится если инстанс не авторизован", async () => {
-    MOCK_API.getStateInstance.mockResolvedValue({ stateInstance: "notAuthorized" })
+    MOCK_API.getStateInstance.mockResolvedValue({
+      stateInstance: "notAuthorized",
+    })
 
     const { result } = renderHook(() => useConnection())
 
-    let ok = false
+    let ok: boolean | undefined
     await act(async () => {
-      ok = await result.current.connect(MOCK_CREDS)
+      ok = await result.current.connect(TEST_CREDS)
     })
 
     expect(ok).toBe(false)
     expect(result.current.setupError).toMatch(/notAuthorized/)
+    expect(result.current.connecting).toBe(false)
     expect(MOCK_API.configureHttpApi).not.toHaveBeenCalled()
   })
 
@@ -66,11 +70,14 @@ describe("useConnection", () => {
 
     const { result } = renderHook(() => useConnection())
 
+    let ok: boolean | undefined
     await act(async () => {
-      await result.current.connect(MOCK_CREDS)
+      ok = await result.current.connect(TEST_CREDS)
     })
 
+    expect(ok).toBe(false)
     expect(result.current.setupError).toBe("сеть легла")
+    expect(result.current.connecting).toBe(false)
   })
 
   it("ставит дефолтную ошибку если упало не Error", async () => {
@@ -78,10 +85,12 @@ describe("useConnection", () => {
 
     const { result } = renderHook(() => useConnection())
 
+    let ok: boolean | undefined
     await act(async () => {
-      await result.current.connect(MOCK_CREDS)
+      ok = await result.current.connect(TEST_CREDS)
     })
 
+    expect(ok).toBe(false)
     expect(result.current.setupError).toBe(
       "Не удалось подключиться к GREEN-API.",
     )
@@ -94,9 +103,9 @@ describe("useConnection", () => {
 
     const { result } = renderHook(() => useConnection())
 
-    let ok = false
+    let ok: boolean | undefined
     await act(async () => {
-      ok = await result.current.connect(MOCK_CREDS)
+      ok = await result.current.connect(TEST_CREDS)
     })
 
     expect(ok).toBe(false)
@@ -109,7 +118,7 @@ describe("useConnection", () => {
     const { result } = renderHook(() => useConnection())
 
     await act(async () => {
-      await result.current.connect(MOCK_CREDS)
+      await result.current.connect(TEST_CREDS)
     })
 
     expect(result.current.setupError).toBe("fail")
@@ -120,7 +129,7 @@ describe("useConnection", () => {
     MOCK_API.configureHttpApi.mockResolvedValue(undefined)
 
     await act(async () => {
-      await result.current.connect(MOCK_CREDS)
+      await result.current.connect(TEST_CREDS)
     })
 
     expect(result.current.setupError).toBe("")
@@ -139,10 +148,10 @@ describe("useConnection", () => {
 
     const { result } = renderHook(() => useConnection())
 
-    let connectionPromise: Promise<boolean>
+    let connectionPromise!: Promise<boolean>
 
     act(() => {
-      connectionPromise = result.current.connect(MOCK_CREDS)
+      connectionPromise = result.current.connect(TEST_CREDS)
     })
 
     expect(result.current.connecting).toBe(true)

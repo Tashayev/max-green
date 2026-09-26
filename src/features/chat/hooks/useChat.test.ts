@@ -5,7 +5,7 @@ import { useChat } from "./useChat"
 import { MOCK_API } from "../../../tests/mocks"
 import type { Message } from "../../../sheared/types/common"
 import type { GreenApiMessage, SendMessageResponse } from "../../../api/types"
-import { CHAT_ID, MOCK_CREDS } from "../../../tests/fixtures"
+import { CHAT_ID, TEST_CREDS } from "../../../tests/fixtures"
 
 vi.mock("../../../api/greenApi", () => ({
   greenApi: {
@@ -39,12 +39,12 @@ describe("useChat", () => {
       makeMessage({ idMessage: "2", textMessage: "как дела" }),
     ])
 
-    const { result } = renderHook(() => useChat(MOCK_CREDS, CHAT_ID))
+    const { result } = renderHook(() => useChat(TEST_CREDS, CHAT_ID))
 
     await waitFor(() => expect(result.current.loading).toBe(false))
 
     expect(MOCK_API.getChatHistory).toHaveBeenCalledWith(
-      MOCK_CREDS,
+      TEST_CREDS,
       CHAT_ID,
       100,
       expect.any(AbortSignal),
@@ -61,7 +61,7 @@ describe("useChat", () => {
   })
 
   it("не грузит ничего если нет chatId", () => {
-    renderHook(() => useChat(MOCK_CREDS, null))
+    renderHook(() => useChat(TEST_CREDS, null))
     expect(MOCK_API.getChatHistory).not.toHaveBeenCalled()
   })
 
@@ -72,7 +72,7 @@ describe("useChat", () => {
     const initialProps: Props = { id: CHAT_ID }
 
     const { result, rerender } = renderHook(
-      ({ id }: Props) => useChat(MOCK_CREDS, id),
+      ({ id }: Props) => useChat(TEST_CREDS, id),
       { initialProps },
     )
 
@@ -86,7 +86,7 @@ describe("useChat", () => {
   it("пишет ошибку если история упала", async () => {
     MOCK_API.getChatHistory.mockRejectedValue(new Error("500"))
 
-    const { result } = renderHook(() => useChat(MOCK_CREDS, CHAT_ID))
+    const { result } = renderHook(() => useChat(TEST_CREDS, CHAT_ID))
 
     await waitFor(() => expect(result.current.error).toBe("500"))
     expect(result.current.loading).toBe(false)
@@ -97,7 +97,7 @@ describe("useChat", () => {
       new DOMException("aborted", "AbortError"),
     )
 
-    const { result } = renderHook(() => useChat(MOCK_CREDS, CHAT_ID))
+    const { result } = renderHook(() => useChat(TEST_CREDS, CHAT_ID))
 
     await waitFor(() => expect(result.current.loading).toBe(false))
     expect(result.current.error).toBe("")
@@ -106,7 +106,7 @@ describe("useChat", () => {
   it("reload руками перезагружает историю", async () => {
     MOCK_API.getChatHistory.mockResolvedValueOnce([makeMessage()])
 
-    const { result } = renderHook(() => useChat(MOCK_CREDS, CHAT_ID))
+    const { result } = renderHook(() => useChat(TEST_CREDS, CHAT_ID))
     await waitFor(() => expect(result.current.messages).toHaveLength(1))
 
     MOCK_API.getChatHistory.mockResolvedValueOnce([
@@ -121,7 +121,7 @@ describe("useChat", () => {
     expect(result.current.messages).toHaveLength(2)
   })
 
-  it("reload чистит messages если нет MOCK_CREDS/chatId", async () => {
+  it("reload чистит messages если нет TEST_CREDS/chatId", async () => {
     const { result } = renderHook(() => useChat(null, null))
 
     await act(async () => {
@@ -143,7 +143,7 @@ describe("useChat", () => {
         }),
     )
 
-    const { result } = renderHook(() => useChat(MOCK_CREDS, CHAT_ID))
+    const { result } = renderHook(() => useChat(TEST_CREDS, CHAT_ID))
     await waitFor(() => expect(result.current.loading).toBe(false))
 
     let sendPromise!: Promise<void>
@@ -164,14 +164,14 @@ describe("useChat", () => {
 
     expect(result.current.messages[0].status).toBe("sent")
     expect(result.current.sending).toBe(false)
-    expect(MOCK_API.sendMessage).toHaveBeenCalledWith(MOCK_CREDS, CHAT_ID, "привет")
+    expect(MOCK_API.sendMessage).toHaveBeenCalledWith(TEST_CREDS, CHAT_ID, "привет")
   })
 
   it("send помечает failed при ошибке и пишет error", async () => {
     MOCK_API.getChatHistory.mockResolvedValue([])
     MOCK_API.sendMessage.mockRejectedValue(new Error("нет соединения"))
 
-    const { result } = renderHook(() => useChat(MOCK_CREDS, CHAT_ID))
+    const { result } = renderHook(() => useChat(TEST_CREDS, CHAT_ID))
     await waitFor(() => expect(result.current.loading).toBe(false))
 
     await act(async () => {
@@ -185,7 +185,7 @@ describe("useChat", () => {
 
   it("send игнорит пустую строку и пробелы", async () => {
     MOCK_API.getChatHistory.mockResolvedValue([])
-    const { result } = renderHook(() => useChat(MOCK_CREDS, CHAT_ID))
+    const { result } = renderHook(() => useChat(TEST_CREDS, CHAT_ID))
     await waitFor(() => expect(result.current.loading).toBe(false))
 
     await act(async () => {
@@ -197,7 +197,7 @@ describe("useChat", () => {
     expect(result.current.messages).toEqual([])
   })
 
-  it("send ничего не делает без MOCK_CREDS или chatId", async () => {
+  it("send ничего не делает без TEST_CREDS или chatId", async () => {
     const { result } = renderHook(() => useChat(null, null))
 
     await act(async () => {
@@ -219,7 +219,7 @@ describe("useChat", () => {
         }),
     )
 
-    const { result } = renderHook(() => useChat(MOCK_CREDS, CHAT_ID))
+    const { result } = renderHook(() => useChat(TEST_CREDS, CHAT_ID))
     await waitFor(() => expect(result.current.loading).toBe(false))
 
     let p!: Promise<void>
@@ -245,20 +245,20 @@ describe("useChat", () => {
     MOCK_API.getChatHistory.mockResolvedValue([])
     MOCK_API.sendMessage.mockResolvedValue(sendResponse)
 
-    const { result } = renderHook(() => useChat(MOCK_CREDS, CHAT_ID))
+    const { result } = renderHook(() => useChat(TEST_CREDS, CHAT_ID))
     await waitFor(() => expect(result.current.loading).toBe(false))
 
     await act(async () => {
       await result.current.send("  привет  ")
     })
 
-    expect(MOCK_API.sendMessage).toHaveBeenCalledWith(MOCK_CREDS, CHAT_ID, "привет")
+    expect(MOCK_API.sendMessage).toHaveBeenCalledWith(TEST_CREDS, CHAT_ID, "привет")
     expect(result.current.messages[0].text).toBe("привет")
   })
   it("addMessage добавляет входящее сообщение", async () => {
     MOCK_API.getChatHistory.mockResolvedValue([])
 
-    const { result } = renderHook(() => useChat(MOCK_CREDS, CHAT_ID))
+    const { result } = renderHook(() => useChat(TEST_CREDS, CHAT_ID))
     await waitFor(() => expect(result.current.loading).toBe(false))
 
     const incoming: Message = {
@@ -279,7 +279,7 @@ describe("useChat", () => {
   it("addMessage не дублирует сообщение с тем же id", async () => {
     MOCK_API.getChatHistory.mockResolvedValue([])
 
-    const { result } = renderHook(() => useChat(MOCK_CREDS, CHAT_ID))
+    const { result } = renderHook(() => useChat(TEST_CREDS, CHAT_ID))
     await waitFor(() => expect(result.current.loading).toBe(false))
 
     const incoming: Message = {
