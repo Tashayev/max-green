@@ -1,12 +1,12 @@
 # MAX Chat + GREEN-API
 
-React + TypeScript test project for a Frontend Developer position.
+Тестовый проект на React + TypeScript для позиции Frontend Developer.
 
-## Stack
+## Стек
 
 React 19, TypeScript, Vite 8, Vitest 5, React Testing Library.
 
-## Structure
+## Структура
 
 ```text
 src/
@@ -15,47 +15,53 @@ src/
 │   ├── auth/      # SetupScreen, useConnection, useCredentials
 │   ├── chat/      # components, hooks, emoji, utils
 │   └── settings/
-├── sheared/       # constants, hooks, types, utils
+├── shared/        # constants, hooks, types, utils
 ├── tests/         # fixtures.ts, mocks.ts, setup.ts
 ├── App.tsx
 └── main.tsx
 ```
 
-## Architecture
+## Архитектура
 
-**API** — components never call `fetch`. `client.ts` handles URL building, credentials encoding, query params, `AbortSignal`, response parsing and errors. `greenApi.ts` provides typed API methods.
+**API** — компоненты не работают напрямую с `fetch`. Файл `client.ts` отвечает за формирование URL, кодирование credentials, query-параметры, `AbortSignal`, обработку ответов и ошибок. `greenApi.ts` содержит типизированные методы API.
 
-**Features** — chat logic is separated into hooks and utilities. API DTOs are mapped to domain types.
+**Features** — логика чата разделена между hooks и вспомогательными функциями. API DTO преобразуются в доменные типы через mapper.
 
-**Types** — strict TypeScript with separate API and domain types.
+**Types** — используется strict TypeScript. Типы API и доменные типы разделены.
 
-## Main Behaviors
+## Основные возможности
 
-* Optimistic message sending: `sending → sent` / `sending → failed`
-* GREEN-API long polling with request cancellation and notification deletion
-* Race protection for connection and chat history requests
-* Message merging by `id`
-* Emoji picker with cursor-position insertion
+* Оптимистическая отправка сообщений: `sending → sent` / `sending → failed`
+* Long polling GREEN-API с отменой запросов и удалением обработанных уведомлений
+* Защита от race conditions при подключении и загрузке истории
+* Объединение сообщений по `id`
+* Emoji picker с вставкой в позицию курсора
 
-## Run
+## Локальный запуск
 
-Node.js 24.18.0
+Требуется Node.js 24.18.0.
 
 ```bash
 npm install
 npm run dev
 ```
 
-## Build
+После запуска приложение будет доступно по адресу:
+
+```text
+http://localhost:5173
+```
+
+## Сборка
 
 ```bash
 npm run build
 npm run preview
 ```
 
-`build` runs TypeScript checking before Vite build.
+`npm run build` сначала выполняет проверку TypeScript, затем запускает production-сборку Vite.
 
-## Test
+## Тесты
 
 ```bash
 npm test
@@ -63,24 +69,30 @@ npm run test:run
 npm run test:ui
 ```
 
-Examples:
+Примеры запуска отдельных тестов:
 
 ```bash
 npx vitest run src/api/client.test.ts
 npx vitest run -t "addMessage"
 ```
 
-Tests cover API client, connection, credentials, chat logic and message mapping.
+Тесты покрывают:
 
-Fixtures and API mocks are located in `src/tests/`.
+* `client.test.ts` — URL, encoding, query-параметры, GET/POST/DELETE, ответы и ошибки
+* `useConnection.test.ts` — состояния подключения, ошибки и `connecting`
+* `useCredentials.test.ts` — чтение, сохранение и очистку credentials
+* `useChat.test.ts` — загрузку истории, ошибки, reload, отправку и `addMessage`
+* `messageMappers.test.ts` — преобразование и фильтрацию сообщений
 
-## Deploy
+Общие fixtures и API mocks находятся в `src/tests/`.
 
-Live demo:
+## Деплой
 
-[https://max-green.netlify.app/](https://max-green.netlify.app/?utm_source=chatgpt.com)
+Онлайн-версия:
 
-Netlify:
+https://max-green.netlify.app/
+
+Настройки Netlify:
 
 ```text
 Build command: npm run build
@@ -89,8 +101,8 @@ Publish directory: dist
 
 ## GREEN-API
 
-Used methods:
+Используемые методы:
 
 `getStateInstance`, `setSettings`, `sendMessage`, `receiveNotification`, `deleteNotification`, `getChatHistory`.
 
-Credentials are stored in `localStorage`. No backend is used.
+Backend не используется. Credentials хранятся в `localStorage`.
