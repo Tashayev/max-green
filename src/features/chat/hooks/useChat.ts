@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from "react"
 import { greenApi } from "../../../api/greenApi"
 import type { Credentials, Message } from "../../../sheared/types/common"
 import { mapHistory } from "../utils/messageMappers"
-import { HISTORY_LIMIT } from "../../../sheared/utils/constants/constants"
+import { HISTORY_LIMIT } from "../utils/constants"
 
 
 

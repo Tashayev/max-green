@@ -1,6 +1,6 @@
 import type { Credentials } from "../sheared/types/common"
 
-const API_URL = "https://api.green-api.com"
+export const API_URL = "https://api.green-api.com"
 
 function buildUrl(method: string, credentials: Credentials): string {
   const [path, query] = method.split("?")
@@ -74,19 +74,19 @@ export async function greenApiDelete<T>(
   method: string,
   credentials: Credentials,
   signal?: AbortSignal,
-  pathSuffix = ""
+  pathSuffix = "",
 ): Promise<T> {
   const response = await fetch(
     `${API_URL}/waInstance${encodeURIComponent(
-      credentials.idInstance
+      credentials.idInstance,
     )}/${method}/${encodeURIComponent(
-      credentials.apiTokenInstance
+      credentials.apiTokenInstance,
     )}${pathSuffix}`,
     {
       method: "DELETE",
       signal,
-    }
-  );
+    },
+  )
 
-  return parseResponse<T>(response);
+  return parseResponse<T>(response)
 }

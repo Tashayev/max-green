@@ -1,6 +1,6 @@
 import { Credentials } from "../sheared/types/common"
 
-export const CREDS: Credentials = {
+export const MOCK_CREDS: Credentials = {
   idInstance: "1101000000",
   apiTokenInstance: "abc123",
 }
