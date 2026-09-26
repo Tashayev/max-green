@@ -20,7 +20,7 @@ src/
 ├── App.tsx
 └── main.tsx
 ```
-##Скриншоты
+## Скриншоты
 <img width="1440" height="855" alt="Screenshot 2026-09-26 at 19 36 44" src="https://github.com/user-attachments/assets/287175ad-8a93-4c87-8135-06b6a3c1cf61" />
 <img width="1440" height="855" alt="Screenshot 2026-09-26 at 19 39 16" src="https://github.com/user-attachments/assets/5b0a22f3-7dc3-45a7-9976-e2a890999830" />
 
