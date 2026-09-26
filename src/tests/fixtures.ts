@@ -1,4 +1,4 @@
-import { Credentials } from "../sheared/types/common"
+import { Credentials } from "../shared/types/common"
 
 export const TEST_CREDS: Credentials = {
   idInstance: "1101000000",

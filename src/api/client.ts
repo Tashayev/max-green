@@ -1,4 +1,4 @@
-import type { Credentials } from "../sheared/types/common"
+import type { Credentials } from "../shared/types/common"
 
 export const API_URL = "https://api.green-api.com"
 

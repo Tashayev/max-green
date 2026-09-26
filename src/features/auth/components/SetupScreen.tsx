@@ -4,7 +4,7 @@ import {
   KeyRound,
   MessageCircle,
 } from "lucide-react";
-import type { Credentials } from "../../../sheared/types/common";
+import type { Credentials } from "../../../shared/types/common";
 
 interface SetupScreenProps {
   initialValues: Credentials;

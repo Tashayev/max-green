@@ -1,5 +1,5 @@
 import { Check, CircleAlert } from "lucide-react";
-import type { Message } from "../../../sheared/types/common";
+import type { Message } from "../../../shared/types/common";
 
 interface MessageBubbleProps {
   message: Message;

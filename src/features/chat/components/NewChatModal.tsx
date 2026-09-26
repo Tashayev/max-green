@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { X } from "lucide-react";
-import type { Chat } from "../../../sheared/types/common";
+import type { Chat } from "../../../shared/types/common";
 
 interface NewChatModalProps {
   onClose: () => void;

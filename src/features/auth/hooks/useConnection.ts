@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react"
 import { greenApi } from "../../../api/greenApi"
-import type { Credentials } from "../../../sheared/types/common"
+import type { Credentials } from "../../../shared/types/common"
 
 export function useConnection() {
   const [setupError, setSetupError] = useState("")

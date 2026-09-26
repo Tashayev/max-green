@@ -1,4 +1,4 @@
-import { Credentials } from "../../../sheared/types/common";
+import { Credentials } from "../../../shared/types/common";
 
 export const EMPTY_CREDENTIALS: Credentials = {
   idInstance: "",

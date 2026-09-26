@@ -2,7 +2,7 @@ import {
   useEffect,
   useRef,
 } from "react";
-import type { Message } from "../../../sheared/types/common";
+import type { Message } from "../../../shared/types/common";
 import { MessageBubble } from "./";
 
 interface MessageListProps {

@@ -6,7 +6,7 @@ import {
 import { Smile } from "lucide-react";
 import { EMOJI_CATEGORIES, EMOJIS } from "../emoji/emoji.data";
 import type { EmojiCategory } from "../types";
-import { useClickOutside } from "../../../sheared/hooks/useClickOutside";
+import { useClickOutside } from "../../../shared/hooks/useClickOutside";
 
 interface EmojiPickerProps {
   onSelect: (emoji: string) => void;

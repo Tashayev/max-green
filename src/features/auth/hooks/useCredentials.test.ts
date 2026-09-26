@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest"
 import { renderHook, act } from "@testing-library/react"
 import { useCredentials } from "./useCredentials"
-import { STORAGE_KEY } from "../../../sheared/constants/storageKeys"
+import { STORAGE_KEY } from "../../../shared/constants/storageKeys"
 import { TEST_CREDS, EMPTY_CREDS } from "../../../tests/fixtures"
 
 describe("useCredentials", () => {

@@ -3,7 +3,7 @@ import { renderHook, act } from "@testing-library/react"
 import { waitFor } from "@testing-library/dom"
 import { useChat } from "./useChat"
 import { MOCK_API } from "../../../tests/mocks"
-import type { Message } from "../../../sheared/types/common"
+import type { Message } from "../../../shared/types/common"
 import type { GreenApiMessage, SendMessageResponse } from "../../../api/types"
 import { CHAT_ID, TEST_CREDS } from "../../../tests/fixtures"
 

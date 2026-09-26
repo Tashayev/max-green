@@ -1,4 +1,4 @@
-import type { Chat } from "../../../sheared/types/common";
+import type { Chat } from "../../../shared/types/common";
 
 interface ChatHeaderProps {
   chat: Chat;

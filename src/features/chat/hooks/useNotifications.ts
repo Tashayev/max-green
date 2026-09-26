@@ -6,7 +6,7 @@ import { greenApi } from "../../../api/greenApi";
 import type {
   Credentials,
   Message,
-} from "../../../sheared/types/common";
+} from "../../../shared/types/common";
 import { mapGreenApiMessage } from "../utils/messageMappers";
 
 interface UseNotificationsOptions {

@@ -1,6 +1,6 @@
 import { useCallback, useState } from "react"
-import type { Credentials } from "../../../sheared/types/common"
-import { STORAGE_KEY } from "../../../sheared/constants/storageKeys"
+import type { Credentials } from "../../../shared/types/common"
+import { STORAGE_KEY } from "../../../shared/constants/storageKeys"
 import { EMPTY_CREDENTIALS } from "../utils/constants"
 
 

@@ -1,5 +1,5 @@
 import { X } from "lucide-react";
-import type { Credentials } from "../../sheared/types/common";
+import type { Credentials } from "../../shared/types/common";
 
 interface SettingsModalProps {
   credentials: Credentials;

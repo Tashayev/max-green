@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react"
-import type { Chat, Credentials, Message } from "./sheared/types/common"
+import type { Chat, Credentials, Message } from "./shared/types/common"
 import { useCredentials } from "./features/auth/hooks/useCredentials"
 import { SetupScreen } from "./features/auth/components/SetupScreen"
 import {
@@ -10,8 +10,8 @@ import {
 
 import { SettingsModal } from "./features/settings/SettingsModal"
 import { useChat, useNotifications } from "./features/chat/hooks"
-import { CHAT_STORAGE_KEY } from "./sheared/constants/storageKeys"
-import { readStoredChat } from "./sheared/utils/chatStoreUtils"
+import { CHAT_STORAGE_KEY } from "./shared/constants/storageKeys"
+import { readStoredChat } from "./shared/utils/chatStoreUtils"
 import { useConnection } from "./features/auth/hooks/useConnection"
 
 export default function App() {

@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react";
-import type { Chat, Message } from "../../../sheared/types/common";
+import type { Chat, Message } from "../../../shared/types/common";
 import { ChatHeader } from "./";
 import { MessageComposer } from "./";
 import { MessageList } from "./";

@@ -1,4 +1,4 @@
-import type { Message } from "../../../sheared/types/common";
+import type { Message } from "../../../shared/types/common";
 import type { GreenApiMessage } from "../../../api/types";
 
 export function mapGreenApiMessage(

@@ -4,7 +4,7 @@ import {
   Plus,
   Settings,
 } from "lucide-react";
-import type { Chat } from "../../../sheared/types/common";
+import type { Chat } from "../../../shared/types/common";
 
 interface ChatSidebarProps {
   chat: Chat | null;
