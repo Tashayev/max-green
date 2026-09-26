@@ -2,117 +2,95 @@
 
 React + TypeScript test project for a Frontend Developer position.
 
-## Architecture
+## Stack
 
-The project is intentionally split by responsibility:
+React 19, TypeScript, Vite 8, Vitest 5, React Testing Library.
+
+## Structure
 
 ```text
 src/
-├── api/
-│   ├── client.ts
-│   ├── greenApi.ts
-│   └── types.ts
+├── api/           # client.ts, greenApi.ts, types.ts
 ├── features/
-│   ├── auth/
-│   ├── chat/
-│   │   ├── components/
-│   │   ├── emoji/
-│   │   ├── hooks/
-│   │   ├── types.ts
-│   │   └── utils/
+│   ├── auth/      # SetupScreen, useConnection, useCredentials
+│   ├── chat/      # components, hooks, emoji, utils
 │   └── settings/
-├── hooks/
-├── types/
+├── sheared/       # constants, hooks, types, utils
+├── tests/         # fixtures.ts, mocks.ts, setup.ts
 ├── App.tsx
 └── main.tsx
 ```
 
-### API layer
+## Architecture
 
-React components never call `fetch` directly.
+**API** — components never call `fetch`. `client.ts` handles URL building, credentials encoding, query params, `AbortSignal`, response parsing and errors. `greenApi.ts` provides typed API methods.
 
-`api/client.ts` contains the HTTP transport.
+**Features** — chat logic is separated into hooks and utilities. API DTOs are mapped to domain types.
 
-`api/greenApi.ts` contains GREEN-API methods and DTO types.
+**Types** — strict TypeScript with separate API and domain types.
 
-### Feature layer
+## Main Behaviors
 
-Chat logic is isolated in:
-
-- `useChat`
-- `useNotifications`
-- `messageMappers`
-- `MessageList`
-- `MessageBubble`
-- `MessageComposer`
-- `EmojiPicker`
-
-### TypeScript
-
-The project uses strict TypeScript.
-
-API DTOs and application/domain models are separated.
-
-GREEN-API response objects are converted to internal `Message` objects through a mapper.
-
-### Emoji picker
-
-Emoji data is outside the UI component.
-
-The picker supports categories, click-outside behavior and keyboard-friendly buttons.
-
-Emoji insertion uses textarea selection, so an emoji is inserted at the current cursor position instead of simply being appended.
-
-### Notifications
-
-Incoming messages use GREEN-API HTTP API long polling.
-
-A request is aborted when the feature is unmounted or credentials change.
-
-Processed notifications are deleted after handling.
-
-The polling loop is scheduled recursively instead of creating overlapping intervals.
-
-### Optimistic sending
-
-Outgoing messages appear immediately with:
-
-```text
-sending -> sent
-```
-
-If the API request fails:
-
-```text
-sending -> failed
-```
-
-This keeps the UI responsive while still exposing the request state.
+* Optimistic message sending: `sending → sent` / `sending → failed`
+* GREEN-API long polling with request cancellation and notification deletion
+* Race protection for connection and chat history requests
+* Message merging by `id`
+* Emoji picker with cursor-position insertion
 
 ## Run
+
+Node.js 24.18.0
 
 ```bash
 npm install
 npm run dev
 ```
 
-Production build:
+## Build
 
 ```bash
 npm run build
+npm run preview
+```
+
+`build` runs TypeScript checking before Vite build.
+
+## Test
+
+```bash
+npm test
+npm run test:run
+npm run test:ui
+```
+
+Examples:
+
+```bash
+npx vitest run src/api/client.test.ts
+npx vitest run -t "addMessage"
+```
+
+Tests cover API client, connection, credentials, chat logic and message mapping.
+
+Fixtures and API mocks are located in `src/tests/`.
+
+## Deploy
+
+Live demo:
+
+[https://max-green.netlify.app/](https://max-green.netlify.app/?utm_source=chatgpt.com)
+
+Netlify:
+
+```text
+Build command: npm run build
+Publish directory: dist
 ```
 
 ## GREEN-API
 
-The implementation uses:
+Used methods:
 
-- `getStateInstance`
-- `setSettings`
-- `sendMessage`
-- `receiveNotification`
-- `deleteNotification`
-- `getChatHistory`
+`getStateInstance`, `setSettings`, `sendMessage`, `receiveNotification`, `deleteNotification`, `getChatHistory`.
 
-The test project intentionally has no backend. Credentials are stored locally in the browser.
-
-For a real production system, API credentials should normally be protected behind a backend/BFF rather than exposed directly to the browser.
+Credentials are stored in `localStorage`. No backend is used.
