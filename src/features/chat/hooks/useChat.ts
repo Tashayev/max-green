@@ -1,125 +1,120 @@
-import {
-  useCallback,
-  useEffect,
-  useState,
-} from "react";
-import { greenApi } from "../../../api/greenApi";
-import type { Credentials, Message } from "../../../sheared/types/common";
-import { mapHistory } from "../utils/messageMappers";
+import { useCallback, useEffect, useState } from "react"
+import { greenApi } from "../../../api/greenApi"
+import type { Credentials, Message } from "../../../sheared/types/common"
+import { mapHistory } from "../utils/messageMappers"
+import { HISTORY_LIMIT } from "../../constants/constants"
 
-const HISTORY_LIMIT = 100;
+
 
 interface UseChatResult {
-  messages: Message[];
-  loading: boolean;
-  sending: boolean;
-  error: string;
-  send: (text: string) => Promise<void>;
-  reload: () => Promise<void>;
+  messages: Message[]
+  loading: boolean
+  sending: boolean
+  error: string
+  send: (text: string) => Promise<void>
+  reload: () => Promise<void>
+  addMessage: (message: Message) => void
 }
 
 export function useChat(
   credentials: Credentials | null,
-  chatId: string | null
+  chatId: string | null,
 ): UseChatResult {
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [sending, setSending] = useState(false);
-  const [error, setError] = useState("");
+  const [messages, setMessages] = useState<Message[]>([])
+  const [loading, setLoading] = useState(false)
+  const [sending, setSending] = useState(false)
+  const [error, setError] = useState("")
 
   const reload = useCallback(async () => {
     if (!credentials || !chatId) {
-      setMessages([]);
-      return;
+      setMessages([])
+      return
     }
 
-    setLoading(true);
-    setError("");
+    setLoading(true)
+    setError("")
 
     try {
       const history = await greenApi.getChatHistory(
         credentials,
         chatId,
-        HISTORY_LIMIT
-      );
+        HISTORY_LIMIT,
+      )
 
-      setMessages(mapHistory(history));
+      setMessages(mapHistory(history))
     } catch (requestError) {
-      if (requestError instanceof DOMException &&
-          requestError.name === "AbortError") {
-        return;
+      if (
+        requestError instanceof DOMException &&
+        requestError.name === "AbortError"
+      ) {
+        return
       }
 
       setError(
         requestError instanceof Error
           ? requestError.message
-          : "Не удалось загрузить историю."
-      );
+          : "Не удалось загрузить историю.",
+      )
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  }, [credentials, chatId]);
+  }, [credentials, chatId])
 
   useEffect(() => {
-    const controller = new AbortController();
+    const controller = new AbortController()
 
     if (!credentials || !chatId) {
-      setMessages([]);
-      return () => controller.abort();
+      setMessages([])
+      return () => controller.abort()
     }
 
-    setLoading(true);
-    setError("");
+    setLoading(true)
+    setError("")
 
     greenApi
-      .getChatHistory(
-        credentials,
-        chatId,
-        HISTORY_LIMIT,
-        controller.signal
-      )
+      .getChatHistory(credentials, chatId, HISTORY_LIMIT, controller.signal)
       .then((history) => {
-        setMessages(mapHistory(history));
+        setMessages(mapHistory(history))
       })
       .catch((requestError: unknown) => {
         if (
           requestError instanceof DOMException &&
           requestError.name === "AbortError"
         ) {
-          return;
+          return
         }
 
         setError(
           requestError instanceof Error
             ? requestError.message
-            : "Не удалось загрузить историю."
-        );
+            : "Не удалось загрузить историю.",
+        )
       })
       .finally(() => {
         if (!controller.signal.aborted) {
-          setLoading(false);
+          setLoading(false)
         }
-      });
+      })
 
-    return () => controller.abort();
-  }, [credentials, chatId]);
+    return () => controller.abort()
+  }, [credentials, chatId])
 
   const send = useCallback(
     async (text: string) => {
       if (!credentials || !chatId || sending) {
-        return;
+        return
       }
 
-      const messageText = text.trim();
+      const messageText = text.trim()
 
       if (!messageText) {
-        return;
+        return
       }
 
-      setSending(true);
-      setError("");
+      setSending(true)
+      setError("")
 
-      const optimisticId = `local-${crypto.randomUUID()}`;
+      const optimisticId = `local-${crypto.randomUUID()}`
 
       setMessages((current) => [
         ...current,
@@ -130,42 +125,48 @@ export function useChat(
           timestamp: Math.floor(Date.now() / 1000),
           status: "sending",
         },
-      ]);
+      ])
 
       try {
-        await greenApi.sendMessage(
-          credentials,
-          chatId,
-          messageText
-        );
+        await greenApi.sendMessage(credentials, chatId, messageText)
 
         setMessages((current) =>
           current.map((message) =>
             message.id === optimisticId
               ? { ...message, status: "sent" }
-              : message
-          )
-        );
+              : message,
+          ),
+        )
       } catch (requestError) {
         setMessages((current) =>
           current.map((message) =>
             message.id === optimisticId
               ? { ...message, status: "failed" }
-              : message
-          )
-        );
+              : message,
+          ),
+        )
 
         setError(
           requestError instanceof Error
             ? requestError.message
-            : "Не удалось отправить сообщение."
-        );
+            : "Не удалось отправить сообщение.",
+        )
       } finally {
-        setSending(false);
+        setSending(false)
       }
     },
-    [credentials, chatId, sending]
-  );
+    [credentials, chatId, sending],
+  )
+
+  const addMessage = useCallback((message: Message) => {
+    setMessages((current) => {
+      if (current.some((existing) => existing.id === message.id)) {
+        return current
+      }
+
+      return [...current, message]
+    })
+  }, [])
 
   return {
     messages,
@@ -174,5 +175,6 @@ export function useChat(
     error,
     send,
     reload,
-  };
+    addMessage,
+  }
 }
