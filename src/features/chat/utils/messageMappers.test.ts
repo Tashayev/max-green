@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest"
 import { mapGreenApiMessage, mapHistory } from "./messageMappers"
 import type { GreenApiMessage } from "../../../api/types"
-import { CHAT_ID } from "../../constants/mocks"
+import { CHAT_ID } from "../../../tests/mocks"
 
 const createMessage = (
   overrides: Partial<GreenApiMessage> = {},

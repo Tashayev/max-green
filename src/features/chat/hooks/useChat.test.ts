@@ -2,9 +2,10 @@ import { describe, it, expect, vi, beforeEach } from "vitest"
 import { renderHook, act } from "@testing-library/react"
 import { waitFor } from "@testing-library/dom"
 import { useChat } from "./useChat"
-import { API, CREDS, CHAT_ID } from "../../constants/mocks"
+import { API } from "../../../tests/mocks"
 import type { Message } from "../../../sheared/types/common"
 import type { GreenApiMessage, SendMessageResponse } from "../../../api/types"
+import { CHAT_ID, CREDS } from "../../../tests/fixtures"
 
 vi.mock("../../../api/greenApi", () => ({
   greenApi: {

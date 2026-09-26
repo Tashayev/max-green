@@ -1,5 +1,5 @@
-import { Chat } from "../types/common"
-import { CHAT_STORAGE_KEY } from "../constants/storageKeys"
+import { Chat } from "../../types/common"
+import { CHAT_STORAGE_KEY } from "../../constants/storageKeys"
 
 export function readStoredChat(): Chat | null {
   try {

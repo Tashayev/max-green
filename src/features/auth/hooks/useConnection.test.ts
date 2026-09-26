@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest"
 import { renderHook, act } from "@testing-library/react"
 import { useConnection } from "./useConnection"
-import { API, CREDS } from "../../constants/mocks"
+import { API, CREDS } from "../../../tests/mocks"
 
 vi.mock("../../../api/greenApi", () => ({
   greenApi: {

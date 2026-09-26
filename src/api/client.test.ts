@@ -4,12 +4,8 @@ import {
   greenApiPost,
   greenApiDelete,
 } from "./client"
-import type { Credentials } from "../sheared/types/common"
+import { CREDS } from "../tests/fixtures"
 
-const creds: Credentials = {
-  idInstance: "1101000000",
-  apiTokenInstance: "abc123",
-}
 
 const jsonResponse = (
   body: unknown,
@@ -40,7 +36,7 @@ describe("greenApiClient", () => {
     it("собирает URL из метода и кредов", async () => {
       fetchMock.mockResolvedValue(jsonResponse({ ok: true }))
 
-      await greenApiGet("getStateInstance", creds)
+      await greenApiGet("getStateInstance", CREDS)
 
       expect(fetchMock).toHaveBeenCalledTimes(1)
       const [url, init] = fetchMock.mock.calls[0]
@@ -67,7 +63,7 @@ describe("greenApiClient", () => {
     it("добавляет query-параметры, если они есть в методе", async () => {
       fetchMock.mockResolvedValue(jsonResponse({}))
 
-      await greenApiGet("getChatHistory?count=100", creds)
+      await greenApiGet("getChatHistory?count=100", CREDS)
 
       const [url] = fetchMock.mock.calls[0]
       expect(url).toBe(
@@ -79,7 +75,7 @@ describe("greenApiClient", () => {
       fetchMock.mockResolvedValue(jsonResponse({}))
       const controller = new AbortController()
 
-      await greenApiGet("getStateInstance", creds, controller.signal)
+      await greenApiGet("getStateInstance", CREDS, controller.signal)
 
       const [, init] = fetchMock.mock.calls[0]
       expect(init.signal).toBe(controller.signal)
@@ -90,7 +86,7 @@ describe("greenApiClient", () => {
 
       const result = await greenApiGet<{ stateInstance: string }>(
         "getStateInstance",
-        creds
+        CREDS
       )
 
       expect(result).toEqual({ stateInstance: "authorized" })
@@ -101,7 +97,7 @@ describe("greenApiClient", () => {
     it("шлёт POST с JSON-телом и заголовком", async () => {
       fetchMock.mockResolvedValue(jsonResponse({ idMessage: "1" }))
 
-      await greenApiPost("sendMessage", creds, {
+      await greenApiPost("sendMessage", CREDS, {
         chatId: "79990001122@c.us",
         message: "привет",
       })
@@ -121,7 +117,7 @@ describe("greenApiClient", () => {
       fetchMock.mockResolvedValue(jsonResponse({}))
       const controller = new AbortController()
 
-      await greenApiPost("sendMessage", creds, {}, controller.signal)
+      await greenApiPost("sendMessage", CREDS, {}, controller.signal)
 
       const [, init] = fetchMock.mock.calls[0]
       expect(init.signal).toBe(controller.signal)
@@ -134,7 +130,7 @@ describe("greenApiClient", () => {
 
       await greenApiDelete(
         "deleteNotification",
-        creds,
+        CREDS,
         undefined,
         "/12345"
       )
@@ -149,7 +145,7 @@ describe("greenApiClient", () => {
     it("работает без pathSuffix", async () => {
       fetchMock.mockResolvedValue(jsonResponse({}))
 
-      await greenApiDelete("deleteNotification", creds)
+      await greenApiDelete("deleteNotification", CREDS)
 
       const [url] = fetchMock.mock.calls[0]
       expect(url).toBe(
@@ -164,7 +160,7 @@ describe("greenApiClient", () => {
         jsonResponse({ message: "Instance not authorized" }, { status: 401 })
       )
 
-      await expect(greenApiGet("getStateInstance", creds)).rejects.toThrow(
+      await expect(greenApiGet("getStateInstance", CREDS)).rejects.toThrow(
         "Instance not authorized"
       )
     })
@@ -172,7 +168,7 @@ describe("greenApiClient", () => {
     it("кидает Error с текстом, если ответ — не JSON", async () => {
       fetchMock.mockResolvedValue(textResponse("Bad gateway", { status: 502 }))
 
-      await expect(greenApiGet("getStateInstance", creds)).rejects.toThrow(
+      await expect(greenApiGet("getStateInstance", CREDS)).rejects.toThrow(
         "Bad gateway"
       )
     })
@@ -180,7 +176,7 @@ describe("greenApiClient", () => {
     it("кидает HTTP <status> если тело пустое и не ok", async () => {
       fetchMock.mockResolvedValue(new Response("", { status: 500 }))
 
-      await expect(greenApiGet("getStateInstance", creds)).rejects.toThrow(
+      await expect(greenApiGet("getStateInstance", CREDS)).rejects.toThrow(
         "HTTP 500"
       )
     })
@@ -188,7 +184,7 @@ describe("greenApiClient", () => {
     it("возвращает null на пустом теле с ok", async () => {
       fetchMock.mockResolvedValue(new Response("", { status: 200 }))
 
-      const result = await greenApiGet<null>("getStateInstance", creds)
+      const result = await greenApiGet<null>("getStateInstance", CREDS)
 
       expect(result).toBeNull()
     })
@@ -196,7 +192,7 @@ describe("greenApiClient", () => {
     it("возвращает строку, если тело не JSON но ok", async () => {
       fetchMock.mockResolvedValue(textResponse("pong", { status: 200 }))
 
-      const result = await greenApiGet<string>("ping", creds)
+      const result = await greenApiGet<string>("ping", CREDS)
 
       expect(result).toBe("pong")
     })
@@ -204,7 +200,7 @@ describe("greenApiClient", () => {
     it("пробрасывает ошибки сети из fetch", async () => {
       fetchMock.mockRejectedValue(new TypeError("Failed to fetch"))
 
-      await expect(greenApiGet("getStateInstance", creds)).rejects.toThrow(
+      await expect(greenApiGet("getStateInstance", CREDS)).rejects.toThrow(
         "Failed to fetch"
       )
     })
@@ -212,7 +208,7 @@ describe("greenApiClient", () => {
     it("пробрасывает AbortError как есть", async () => {
       fetchMock.mockRejectedValue(new DOMException("aborted", "AbortError"))
 
-      await expect(greenApiGet("getStateInstance", creds)).rejects.toMatchObject(
+      await expect(greenApiGet("getStateInstance", CREDS)).rejects.toMatchObject(
         { name: "AbortError" }
       )
     })
