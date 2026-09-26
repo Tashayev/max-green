@@ -30,7 +30,10 @@ describe("useConnection", () => {
     expect(ok).toBe(true)
     expect(result.current.setupError).toBe("")
     expect(result.current.connecting).toBe(false)
-    expect(MOCK_API.configureHttpApi).toHaveBeenCalledWith(TEST_CREDS)
+    expect(MOCK_API.configureHttpApi).toHaveBeenCalledWith(
+      TEST_CREDS,
+      expect.anything(),
+    )
   })
 
   it("коннектится когда инстанс ready", async () => {
