@@ -1,11 +1,8 @@
 import { useCallback, useState } from "react"
 import type { Credentials } from "../../../sheared/types/common"
 import { STORAGE_KEY } from "../../../sheared/constants/storageKeys"
+import { EMPTY_CREDENTIALS } from "../utils/constants"
 
-const EMPTY_CREDENTIALS: Credentials = {
-  idInstance: "",
-  apiTokenInstance: "",
-}
 
 function isCredentials(value: unknown): value is Credentials {
   if (typeof value !== "object" || value === null) {
